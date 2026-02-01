@@ -212,6 +212,53 @@ body {
 }
 
 /* ============================================
+   PROJECTS COUNT
+   ============================================ */
+.projects-count {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.count-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.count-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.count-item.total .count-number {
+  color: var(--accent-primary);
+}
+
+.count-item.filtered .count-number {
+  color: var(--success-color);
+}
+
+.count-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.count-divider {
+  width: 1px;
+  height: 40px;
+  background-color: var(--border-color);
+}
+
+/* ============================================
    REPOSITORY GRID
    ============================================ */
 .repo-grid {

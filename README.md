@@ -2,6 +2,10 @@
 
 A modern React application built with Vite for showcasing your GitHub projects in real-time.
 
+## Live Demo
+
+Check out the live demo: [https://project-view-seven.vercel.app/](https://project-view-seven.vercel.app/)
+
 ## Features
 
 - ⚡ **Fast Performance** - Built with Vite for lightning-fast development and builds

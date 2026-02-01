@@ -38,23 +38,43 @@ const REPO_IMAGES = {
 
 /**
  * Fetches all repositories for a given GitHub user
- * Uses GitHub REST API v3
+ * Uses GitHub REST API v3 with pagination to get ALL repos
  * @param {string} username - GitHub username
  * @returns {Promise<Array>} Array of repository objects
  */
 const fetchRepositories = async (username) => {
   try {
-    // Fetch repositories sorted by updated date to get latest projects first
-    const response = await fetch(
-      `https://api.github.com/users/${username}/repos?sort=updated&per_page=100`
-    );
+    let allRepos = [];
+    let page = 1;
+    const perPage = 100;
+    let hasMorePages = true;
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch repositories: ${response.status}`);
+    // Fetch all pages of repositories
+    while (hasMorePages) {
+      const response = await fetch(
+        `https://api.github.com/users/${username}/repos?sort=updated&per_page=${perPage}&page=${page}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch repositories: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.length === 0) {
+        hasMorePages = false;
+      } else {
+        allRepos = [...allRepos, ...data];
+        page++;
+
+        // If we got fewer results than requested, we've reached the end
+        if (data.length < perPage) {
+          hasMorePages = false;
+        }
+      }
     }
 
-    const data = await response.json();
-    return data;
+    return allRepos;
   } catch (error) {
     console.error('Error fetching repositories:', error);
     return [];
@@ -222,6 +242,25 @@ const ErrorDisplay = ({ message, onRetry }) => (
       <button className="retry-button" onClick={onRetry}>
         Try Again
       </button>
+    </div>
+  </div>
+);
+
+/**
+ * ProjectsCount Component
+ * Displays the total number of projects available
+ * Updates in real-time based on filters applied
+ */
+const ProjectsCount = ({ totalRepos, filteredRepos }) => (
+  <div className="projects-count">
+    <div className="count-item total">
+      <span className="count-number">{totalRepos}</span>
+      <span className="count-label">Total Projects</span>
+    </div>
+    <div className="count-divider"></div>
+    <div className="count-item filtered">
+      <span className="count-number">{filteredRepos}</span>
+      <span className="count-label">Showing</span>
     </div>
   </div>
 );
@@ -420,6 +459,9 @@ const App = () => {
         hideForks={hideForks}
         setHideForks={setHideForks}
       />
+
+      {/* Projects Count */}
+      <ProjectsCount totalRepos={repos.length} filteredRepos={filteredRepos.length} />
 
       {/* Repository Grid */}
       <main className="repo-grid">
